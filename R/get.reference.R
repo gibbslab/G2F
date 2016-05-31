@@ -2,7 +2,12 @@ get.reference<-function(organism){
   reaction_all <- data.frame(keggList("reaction"))
   id_all <- as.vector(regmatches(rownames(reaction_all),regexpr("R[[:digit:]]+",rownames(reaction_all))))
   rx_all <- as.vector(sapply(as.vector(reaction_all[,1]), .extract))
-  reaction_all <- cbind(id_all,rx_all)
+  ez_all <- keggLink("enzyme","reaction")
+  ez_all <- as.data.frame(cbind(regmatches(names(ez_all),regexpr("R[[:digit:]]+",names(ez_all))),as.vector(gsub("ec:","",ez_all))))
+  colnames(ez_all) <- c("id","ez")
+  reaction_all <- as.data.frame(cbind(id_all,rx_all))
+  reaction_all <- merge(reaction_all,ez_all,by.x="id_all",by.y = "id",all.x = TRUE)
+  colnames(reaction_all) <- c("id","reaction","ec")
   if(organism == "all"){
     return (reaction_all)
   } else {
@@ -11,7 +16,7 @@ get.reference<-function(organism){
     ko_o <- names(ko_all[ko_all%in%names(ko_o)])
     id_o <- unique(regmatches(ko_o,regexpr("R[[:digit:]]+",ko_o)))
     kegg_o <- as.data.frame(reaction_all[reaction_all[,1]%in%id_o,])
-    colnames(kegg_o) <- c("id","reaction")
+    colnames(kegg_o) <- c("id","reaction","ec")
     return(kegg_o)
   }
 }

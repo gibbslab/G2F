@@ -1,5 +1,5 @@
-\name{getReference}
-\alias{getReference}
+\name{get.reference}
+\alias{get.reference}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{getReference
 %%  ~~function to do ... ~~
@@ -8,7 +8,7 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-getReference(organism)
+get.reference(organism)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
