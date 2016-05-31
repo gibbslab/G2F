@@ -10,7 +10,7 @@ g2f <- function(reactionList, reference, limit = 0.5, woCompartment=FALSE,consen
     message(paste0(length(orphan_r)," Orphan reactants found"))
     to.add <- unique(unlist(sapply(orphan_r, function(metabolite){.reactant.fill(metabolite,reference)})))
     rxn <- unique(c(reactions,to.add[unlist(sapply(to.add, function(reaction){.addition.cost(reaction,reactions)}))<limit]))
-    if(length(orphan.reactants(rxn))<=length(orphan_r)){
+    if(length(orphan.reactants(rxn))<length(orphan_r)){
       reactions <- unique(c(reactions,rxn))
     } else {
       break
@@ -25,7 +25,7 @@ g2f <- function(reactionList, reference, limit = 0.5, woCompartment=FALSE,consen
     message(paste0(length(orphan_p)," Orphan products found"))
     to.add <- unique(unlist(sapply(orphan_p, function(metabolite){.product.fill(metabolite,reference)})))
     rxn <- unique(c(reactions,to.add[unlist(sapply(to.add, function(reaction){.addition.cost(reaction,reactions)}))<limit]))
-    if(length(orphan.products(rxn))<=length(orphan_p)){
+    if(length(orphan.products(rxn))<length(orphan_p)){
       reactions <- unique(c(reactions,rxn))
     } else {
       break
