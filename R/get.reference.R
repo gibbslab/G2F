@@ -1,12 +1,9 @@
-get.reference<-function(organism){
+get.reference<-function(organism,sep=" ; "){
   reaction_all <- data.frame(keggList("reaction"))
   id <- as.vector(regmatches(rownames(reaction_all),regexpr("R[[:digit:]]+",rownames(reaction_all))))
   reaction <- as.vector(sapply(as.vector(reaction_all[,1]), .extract))
   ez_all <- keggLink("enzyme","reaction")
   ez_all <- as.data.frame(cbind(id=as.vector(gsub("rn:","",names(ez_all))),ec=as.vector(gsub("ec:","",ez_all))))
-  summary.ec <- function(id){paste0(ez_all[ez_all[,"id"]%in%id,"ec"],collapse = " ; ")}
-  ez_all[,"ec"] <- sapply(ez_all[,"id"],summary.ec)
-  ez_all <- unique(ez_all)
   reaction_all <- as.data.frame(cbind(id,reaction))
   reaction_all <- merge(reaction_all,ez_all,by.x="id",by.y = "id",all.x = TRUE)
   ko_all <- keggLink("ko", "reaction")
@@ -20,7 +17,7 @@ get.reference<-function(organism){
     reaction_all <- reaction_all[reaction_all[,"ko"]%in%ko_o[,"ko"],]
     summary.ko <- function(id){
       data <- reaction_all[reaction_all[,"id"]%in%id,]
-      data[,"ko"] <- paste0(unique(data[,"ko"]),collapse = " ; ")
+      data[,"ko"] <- paste0(unique(data[,"ko"]),collapse = sep)
     }
     summary.gpr <- function(id){
       data <- reaction_all[reaction_all[,"id"]%in%id,]
@@ -30,5 +27,10 @@ get.reference<-function(organism){
     reaction_all[,"gpr"] <- sapply(as.vector(reaction_all[,"id"]),summary.gpr)
     reaction_all <- unique(reaction_all)
   }
-  return(reaction_all)
+  summary.ec <- function(id){
+  data <- reaction_all[reaction_all[,"id"]%in%id,]
+  data[,"ec"] <- paste0(unique(data[,"ec"]),collapse = sep)
+  }
+  reaction_all[,"ec"] <- sapply(as.vector(reaction_all[,"id"]),summary.ec)
+  return(unique(reaction_all))
 }
