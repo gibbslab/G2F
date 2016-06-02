@@ -1,22 +1,34 @@
 get.reference<-function(organism){
   reaction_all <- data.frame(keggList("reaction"))
-  id_all <- as.vector(regmatches(rownames(reaction_all),regexpr("R[[:digit:]]+",rownames(reaction_all))))
-  rx_all <- as.vector(sapply(as.vector(reaction_all[,1]), .extract))
+  id <- as.vector(regmatches(rownames(reaction_all),regexpr("R[[:digit:]]+",rownames(reaction_all))))
+  reaction <- as.vector(sapply(as.vector(reaction_all[,1]), .extract))
   ez_all <- keggLink("enzyme","reaction")
-  ez_all <- as.data.frame(cbind(regmatches(names(ez_all),regexpr("R[[:digit:]]+",names(ez_all))),as.vector(gsub("ec:","",ez_all))))
-  colnames(ez_all) <- c("id","ez")
-  reaction_all <- as.data.frame(cbind(id_all,rx_all))
-  reaction_all <- merge(reaction_all,ez_all,by.x="id_all",by.y = "id",all.x = TRUE)
-  colnames(reaction_all) <- c("id","reaction","ec")
-  if(organism == "all"){
-    return (reaction_all)
-  } else {
-    ko_all <- keggLink("ko", "reaction")
+  ez_all <- as.data.frame(cbind(id=as.vector(gsub("rn:","",names(ez_all))),ec=as.vector(gsub("ec:","",ez_all))))
+  summary.ec <- function(id){paste0(ez_all[ez_all[,"id"]%in%id,"ec"],collapse = " ; ")}
+  ez_all[,"ec"] <- sapply(ez_all[,"id"],summary.ec)
+  ez_all <- unique(ez_all)
+  reaction_all <- as.data.frame(cbind(id,reaction))
+  reaction_all <- merge(reaction_all,ez_all,by.x="id",by.y = "id",all.x = TRUE)
+  ko_all <- keggLink("ko", "reaction")
+  ko_all <- cbind(id=gsub("rn:","",names(ko_all)),ko=gsub("ko:","",as.vector(ko_all)))
+  reaction_all<-merge(reaction_all,ko_all,by.x = "id",by.y = "id",all.x = TRUE)
+  if(organism != "all"){
     ko_o <- keggLink(organism, "ko")
-    ko_o <- names(ko_all[ko_all%in%names(ko_o)])
-    id_o <- unique(regmatches(ko_o,regexpr("R[[:digit:]]+",ko_o)))
-    kegg_o <- as.data.frame(reaction_all[reaction_all[,1]%in%id_o,])
-    colnames(kegg_o) <- c("id","reaction","ec")
-    return(kegg_o)
+    ko_o <- cbind(ko=as.vector(gsub("ko:","",names(ko_o))),unigene=as.vector(regmatches(ko_o,regexpr("[[:digit:]]+",ko_o))))
+    ko_o <- as.data.frame(cbind(ko=unique(ko_o[,"ko"]),gpr=sapply(unique(ko_o[,"ko"]), function(ko){paste("(",paste0(ko_o[ko_o[,"ko"]%in%ko,2],collapse = " and "),")")})))
+    reaction_all <- merge(reaction_all,ko_o,by.x = "ko",by.y = "ko",all.x = TRUE)
+    reaction_all <- reaction_all[reaction_all[,"ko"]%in%ko_o[,"ko"],]
+    summary.ko <- function(id){
+      data <- reaction_all[reaction_all[,"id"]%in%id,]
+      data[,"ko"] <- paste0(unique(data[,"ko"]),collapse = " ; ")
+    }
+    summary.gpr <- function(id){
+      data <- reaction_all[reaction_all[,"id"]%in%id,]
+      data[,"gpr"] <- paste0(unique(data[,"gpr"]),collapse = " or ")
+    }
+    reaction_all[,"ko"] <- sapply(as.vector(reaction_all[,"id"]),summary.ko)
+    reaction_all[,"gpr"] <- sapply(as.vector(reaction_all[,"id"]),summary.gpr)
+    reaction_all <- unique(reaction_all)
   }
+  return(reaction_all)
 }
