@@ -32,5 +32,7 @@ get.reference<-function(organism,sep=" ; "){
   data[,"ec"] <- paste0(unique(data[,"ec"]),collapse = sep)
   }
   reaction_all[,"ec"] <- sapply(as.vector(reaction_all[,"id"]),summary.ec)
-  return(unique(reaction_all))
+  reaction_all <- unique(reaction_all)
+  rownames(reaction_all) <- NULL
+  return(reaction_all)
 }
