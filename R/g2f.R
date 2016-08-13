@@ -32,8 +32,6 @@ g2f <- function(reactionList, reference, limit = 0.5, woCompartment=FALSE,consen
     }
   }
   all <-sort(unique(c(reactions,oreactants)))
-  all <- gsub("^[[:space:]]","",all)
-  all <- gsub("[[:space:]]$","",all)
   if(consensus==TRUE){
     return(all)
   }else{
@@ -41,4 +39,3 @@ g2f <- function(reactionList, reference, limit = 0.5, woCompartment=FALSE,consen
     return(new)
   }
 }
-
