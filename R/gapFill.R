@@ -1,9 +1,9 @@
-#' @export g2f
+#' @export gapFill
 #' @author Daniel Camilo Osorio <dcosorioh@unal.edu.co>
 # Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
 # Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
 
-g2f <- function(reactionList, reference, limit = 0.5, woCompartment=FALSE,consensus=FALSE){
+gapFill <- function(reactionList, reference, limit = 0.5, woCompartment=FALSE,consensus=FALSE){
   if(woCompartment==TRUE){
     reactionList <- gsub("\\[[[:alpha:]]\\]","",reactionList)
   }
