@@ -7,7 +7,7 @@ Author: Kelly Botero[aut,cre], Daniel Osorio[aut,cre], Janneth Gonzalez[aut],
 Maintainer: Daniel Osorio <dcosorioh@unal.edu.co>
 Description: Find and fill gaps in metabolic reconstructions based on reference
     reconstruction.
-Depends: KEGGREST
+Imports: KEGGREST, minval
 License: GPL2
 LazyData: TRUE
 RoxygenNote: 5.0.1

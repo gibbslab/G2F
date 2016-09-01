@@ -1,11 +1,8 @@
 #' @export lockedReactions
 #' @author Andrés Pinzón <ampinzonv@unal.edu.co>
+#' Mantainer: Daniel Camilo Osorio Hurtado <dcosorioh@unal.edu.co>
 # Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
 # Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
-
-# Function to identify locked reactions using FBA analysis. 
-# Each function is set as objective function and all reactions without flux in all iteraction is reported as locked.
-# This function takes as input a valid modelorg model
 
 lockedReactions <- function(model){
   if(!is.loaded("sybil")){require("sybil")}
