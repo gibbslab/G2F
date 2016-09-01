@@ -1,3 +1,8 @@
+#' @export g2f
+#' @author Daniel Camilo Osorio <dcosorioh@unal.edu.co>
+# Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
+# Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
+
 g2f <- function(reactionList, reference, limit = 0.5, woCompartment=FALSE,consensus=FALSE){
   if(woCompartment==TRUE){
     reactionList <- gsub("\\[[[:alpha:]]\\]","",reactionList)

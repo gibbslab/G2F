@@ -2,9 +2,12 @@ Package: g2f
 Type: Package
 Title: Find and fill gaps in metabolic reconstructions
 Version: 0.1.0
-Author: Kelly Botero[aut,cre], Daniel Osorio[aut,cre], Janneth Gonzalez[aut], Andres Pinzon[aut].
+Author: Kelly Botero[aut,cre], Daniel Osorio[aut,cre], Janneth Gonzalez[aut],
+    Andres Pinzon[aut].
 Maintainer: Daniel Osorio <dcosorioh@unal.edu.co>
-Description: Find and fill gaps in metabolic reconstructions based on reference reconstruction
+Description: Find and fill gaps in metabolic reconstructions based on reference
+    reconstruction.
 Depends: KEGGREST
 License: GPL2
 LazyData: TRUE
+RoxygenNote: 5.0.1

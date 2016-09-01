@@ -1,4 +1,10 @@
-get.reference<-function(organism,sep=" ; "){
+#' @export getReference
+#' @author Kelly Botero <kjboteroo@unal.edu.co>
+#' Mantainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
+# Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
+# Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
+
+getReference<-function(organism,sep=" ; "){
   reaction_all <- data.frame(keggList("reaction"))
   id <- as.vector(regmatches(rownames(reaction_all),regexpr("R[[:digit:]]+",rownames(reaction_all))))
   reaction <- as.vector(sapply(as.vector(reaction_all[,1]), .extract))
