@@ -1,5 +1,5 @@
 #' @export gapFill
-#' @author Daniel Camilo Osorio <dcosorioh@unal.edu.co>
+#' @author Kelly Botero <kjboteroo@unal.edu.co> - Maintainer: Daniel Osorio <dcosorioh@unal.edu.co>
 # Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
 # Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
 
