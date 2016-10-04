@@ -4,7 +4,13 @@
 # Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
 # Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
 
-getReference<-function(organism,sep=";"){
+getReference<-function(organism = "all",sep = ";"){
+  # Downloading organism
+  kegg_download <- tempdir()
+  download.file("rest.kegg.jp/list/organism",paste0(kegg_download,"organism.txt"),quiet = TRUE)
+  kegg_organism <- as.data.frame.array(read.csv2(paste0(kegg_download,"organism.txt"),header = FALSE,sep ="\t"))
+  organism <- match(x = organism,table = kegg_organism[,2])
+  ifelse(test = is.na(organism),yes = organism <- "all",no = organism <- kegg_organism[organism,2])
   # Downloading all reactions
   reaction_all <- data.frame(keggList("reaction"))
   id <- as.vector(regmatches(rownames(reaction_all),regexpr("R[[:digit:]]+",rownames(reaction_all))))
@@ -18,6 +24,7 @@ getReference<-function(organism,sep=";"){
   ko_all <- keggLink("ko", "reaction")
   ko_all <- cbind(id=gsub("rn:","",names(ko_all)),ko=gsub("ko:","",as.vector(ko_all)))
   reaction_all<-merge(reaction_all,ko_all,by.x = "id",by.y = "id",all.x = TRUE)
+  # Setting up a specific organism
   if(organism != "all"){
     ko_o <- keggLink(organism, "ko")
     ko_o <- cbind(ko=as.vector(gsub("ko:","",names(ko_o))),unigene=as.vector(regmatches(ko_o,regexpr("[[:digit:]]+",ko_o))))
@@ -41,7 +48,9 @@ getReference<-function(organism,sep=";"){
   data[,"ec"] <- paste0(unique(data[,"ec"]),collapse = sep)
   }
   reaction_all[,"ec"] <- sapply(as.vector(reaction_all[,"id"]),summary.ec)
+  # Extracting uniques
   reaction_all <- unique(reaction_all)
   rownames(reaction_all) <- NULL
+  # Return
   return(reaction_all)
 }

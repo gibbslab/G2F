@@ -4,7 +4,7 @@
 \alias{getReference}
 \title{Download all the set of gene-associated stoichiometric reactions for a specific organism from the KEGG database}
 \usage{
-getReference(organism, sep = " ; ")
+getReference(organism = "all", sep = ";")
 }
 \author{
 Kelly Johana Botero <kjboteroo@unal.edu.co> - Mantainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
