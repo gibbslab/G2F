@@ -1,9 +1,24 @@
 #' @export getReference
-#' @title Download all the set of gene-associated stoichiometric reactions for a specific organism from the KEGG database
+#' @title Download all the set of gene-associated stoichiometricical reactions for a specific organism from the KEGG database
 #' @author Kelly Johana Botero <kjboteroo@unal.edu.co> - Mantainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
-# Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
-# Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
-
+#  Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
+#  Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
+#' @description This function downloads all the gene-associated stoichiometrical reactions for a given organism from the KEGG database. If not valid organism identifier is given, all reactions from the KEGG database are downloaded. GPR are constructed using the KEGG KO association for each enzyme in a specific organism.
+#' @param organism A valid organism identifier for the KEGG database. List of valid organism identifiers are available in: http://rest.kegg.jp/list/organism . If no given, all KEGG stoichiometric reactions are downloaded.
+#' @param sep A character string to separate the terms.
+#' @return A data.frame with the following data associated to the stoichiometrical reactions for a given organism: \itemize{
+#' \item{\code{ko:}} The associated KEGG KO identifier to the reaction. In KEGG, molecular-level functions are stored in the KO (KEGG Orthology) database and associated with ortholog groups in order to enable extension of experimental evidence in a specific organism to other organisms.
+#' \item{\code{id:}} The associated reaction id from the KEGG database.
+#' \item{\code{reaction:}} The stoichiometrical reactions with the following format: \code{"H2O + Urea-1-carboxylate <=> 2 CO2 + 2 NH3"} 
+#' Where arrows and plus signs are surrounded by a "space character", and stoichiometry coefficients are surrounded by spaces, (nothe the "2" before the CO2 or the NH3). Arrows will be in the form "\code{=>}" or "\code{<=>}". KEGG reactions are not compartmentalized.
+#' \item{\code{gpr:}} The Gene-Protein-Reaction (GPR) associations for a specific organism buit from the KEGG KO identifiers.
+#' }
+#' @examples 
+#' \dontrun{
+#' getReference(organism = "hsa",sep = ";")
+#' }
+#' @seealso The KEGG database webpage: http://www.genome.jp/kegg/
+#' @keywords Download reference genome scale metabolic reconstruction
 getReference<-function(organism = "all",sep = ";"){
   # Downloading organism
   kegg_download <- tempdir()
