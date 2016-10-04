@@ -1,10 +1,9 @@
-#' @export lockedReactions
-#' @author Andrés Pinzón <ampinzonv@unal.edu.co>
-#' Mantainer: Daniel Camilo Osorio Hurtado <dcosorioh@unal.edu.co>
-# Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
-# Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
+#' @export blockedReactions
+#' @author Andrés Pinzón <ampinzonv@unal.edu.co> - Mantainer: Daniel Camilo Osorio Hurtado <dcosorioh@unal.edu.co>
+#  Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
+#  Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
 
-lockedReactions <- function(model){
+blockedReactions <- function(model){
   if(!is.loaded("sybil")){require("sybil")}
   locked <- NULL
   pb <- txtProgressBar(min = 1,max = model@react_num,style=3)
