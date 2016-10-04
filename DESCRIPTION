@@ -1,12 +1,11 @@
 Package: g2f
 Type: Package
-Title: Find and fill gaps in metabolic reconstructions
-Version: 0.1.0
+Title: Find and Fill Gaps in Metabolic Reconstructions
+Version: 0.1
 Author: Kelly Botero[aut,cre], Daniel Osorio[aut,cre], Janneth Gonzalez[aut],
     Andres Pinzon[aut].
 Maintainer: Daniel Osorio <dcosorioh@unal.edu.co>
-Description: Find and fill gaps in metabolic reconstructions based on reference
-    reconstruction.
+Description: For a given metabolic reconstruction, this package finds the gaps (metabolites not produced or not consumed in any other reaction), and fills it from a set of stoichiometric reactions of a reference metabolic reconstruction using a weighting function. Also the option to download the set of gene-associated stoichiometric reactions for a specific organism from the KEGG database <http://www.genome.jp/kegg/> is available.
 Imports: KEGGREST, minval
 License: GPL2
 LazyData: TRUE

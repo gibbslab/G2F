@@ -1,17 +1,20 @@
 #' @export getReference
-#' @author Kelly Botero <kjboteroo@unal.edu.co>
-#' Mantainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
+#' @title Download all the set of gene-associated stoichiometric reactions for a specific organism from the KEGG database
+#' @author Kelly Johana Botero <kjboteroo@unal.edu.co> - Mantainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
 # Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
 # Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
 
-getReference<-function(organism,sep=" ; "){
+getReference<-function(organism,sep=";"){
+  # Downloading all reactions
   reaction_all <- data.frame(keggList("reaction"))
   id <- as.vector(regmatches(rownames(reaction_all),regexpr("R[[:digit:]]+",rownames(reaction_all))))
   reaction <- as.vector(sapply(as.vector(reaction_all[,1]), .extract))
+  # Downloading enzyme association
   ez_all <- keggLink("enzyme","reaction")
   ez_all <- as.data.frame(cbind(id=as.vector(gsub("rn:","",names(ez_all))),ec=as.vector(gsub("ec:","",ez_all))))
   reaction_all <- as.data.frame(cbind(id,reaction))
   reaction_all <- merge(reaction_all,ez_all,by.x="id",by.y = "id",all.x = TRUE)
+  # Downloading KO association
   ko_all <- keggLink("ko", "reaction")
   ko_all <- cbind(id=gsub("rn:","",names(ko_all)),ko=gsub("ko:","",as.vector(ko_all)))
   reaction_all<-merge(reaction_all,ko_all,by.x = "id",by.y = "id",all.x = TRUE)
