@@ -2,7 +2,7 @@
 % Please edit documentation in R/additionCost.R
 \name{additionCost}
 \alias{additionCost}
-\title{Calculate the addition cost of a stoichiometric reaction in a metabolic reconstruction}
+\title{Calculate the addition cost of a stoichiometric reaction in a metabolic network}
 \usage{
 additionCost(reaction, reference)
 }
