@@ -1,3 +1,6 @@
+#' @export additionCost
+#' @author Daniel Camilo Osorio <dcosorioh@unal.edu.co>
+#' @title Calculate the addition cost of a stoichiometric reaction in a metabolic reconstruction
 additionCost <- function(reaction,reference){
   mets_r <- metabolites(reference)
   mets <- lapply(reaction,metabolites)
