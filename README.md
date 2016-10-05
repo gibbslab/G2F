@@ -1,6 +1,6 @@
-g2f : Find and Fill Gaps in Metabolic Reconstructions
+g2f : Find and Fill Gaps in Metabolic Networks
 ======
-The **g2f** package was designed as a tool to find and fill gaps in metabolic reconstructions.
+The **g2f** package was designed as a tool to find and fill gaps in metabolic networks.
 Install:
 --------
 This package required R version 2.10 or higher. If you are using an older version of R you will be prompted to upgrade when you try to install the package.
@@ -24,4 +24,4 @@ Available functions:
 
 Citation
 --------
-Kelly Botero, Daniel Osorio, Janneth Gonzalez and Andres Pinzon-Velasco (2016). **g2f: Find and Fill Gaps in Metabolic Reconstructions**. R package version 0.1.
+Kelly Botero, Daniel Osorio, Janneth Gonzalez and Andres Pinzon-Velasco (2016). **g2f: Find and Fill Gaps in Metabolic Networks**. R package version 0.1.
