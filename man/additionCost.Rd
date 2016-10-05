@@ -2,9 +2,13 @@
 % Please edit documentation in R/additionCost.R
 \name{additionCost}
 \alias{additionCost}
-\title{Calculate the addition cost of a stoichiometric reaction in a metabolic network}
+\title{Calculate the cost of addition of a stoichiometric reaction in a metabolic network}
 \usage{
 additionCost(reaction, reference)
+}
+\description{
+For a given set of stoichiometric reactions this function calculates the cost of addition in a reference metabolic network. 
+The cost is calculated by dividing the amount of non included metabolites in the reference metabolic network over the total number of metabolites involved in the reaction.
 }
 \author{
 Daniel Camilo Osorio <dcosorioh@unal.edu.co>
