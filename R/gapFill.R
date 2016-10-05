@@ -3,44 +3,41 @@
 # Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
 # Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
 
-gapFill <- function(reactionList, reference, limit = 0.5, woCompartment=FALSE,consensus=FALSE){
+gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE,consensus=FALSE){
   if(woCompartment==TRUE){
-    reactionList <- gsub("\\[[[:alpha:]]\\]","",reactionList)
+    reactionList <- gsub("\\[[[:alnum:]]*(\\_)?[[:alnum:]]*\\]$","",as.vector(reactionList))
   }
-  reactions <- reactionList
-  orphan <- orphanReactants(reactions)
+  reactions <- as.vector(unique(reactionList))
+  reference <- as.vector(unique(reference))
+  orphan <- unique(c(orphanReactants(reactions),orphanProducts(reactions)))
   repeat{
     orphan_r <- orphanReactants(reactions)
     orphan_r <- orphan_r[orphan_r%in%orphan]
     message(paste0(length(orphan_r)," Orphan reactants found"))
-    to.add <- unique(unlist(sapply(orphan_r, function(metabolite){.reactant.fill(metabolite,reference)})))
-    rxn <- unique(c(reactions,to.add[unlist(sapply(to.add, function(reaction){.addition.cost(reaction,reactions)}))<limit]))
-    if(length(orphanReactants(rxn))<length(orphan_r)){
-      reactions <- unique(c(reactions,rxn))
+    to.add <- unique(unlist(lapply(orphan_r,function(orphan){reference[grep(orphan,reactants(reference),fixed = TRUE)]})))
+    rxn <- to.add[additionCost(to.add,reactionList)<=limit]
+    if(length(orphan_r)<=length(orphanReactants(c(reactions,rxn)))){
+      break;
     } else {
-      break
+      reactions <- unique(c(reactions,rxn))
     }
   }
-  oreactants <- reactions
-  reactions <- reactionList
-  orphan <- orphanProducts(reactions)
   repeat{
     orphan_p <- orphanProducts(reactions)
     orphan_p <- orphan_p[orphan_p%in%orphan]
     message(paste0(length(orphan_p)," Orphan products found"))
-    to.add <- unique(unlist(sapply(orphan_p, function(metabolite){.product.fill(metabolite,reference)})))
-    rxn <- unique(c(reactions,to.add[unlist(sapply(to.add, function(reaction){.addition.cost(reaction,reactions)}))<limit]))
-    if(length(orphanProducts(rxn))<length(orphan_p)){
+    to.add <- unlist(lapply(orphan_p,function(orphan){reference[grep(orphan,products(reference),fixed = TRUE)]}))
+    rxn <- to.add[additionCost(to.add,reactionList)<=limit]
+    if(length(orphan_p)<=length(orphanProducts(c(reactions,rxn)))){
+      break;
+    } else{
       reactions <- unique(c(reactions,rxn))
-    } else {
-      break
     }
   }
-  all <-sort(unique(c(reactions,oreactants)))
-  if(consensus==TRUE){
-    return(all)
-  }else{
-    new <- all[!all%in%reactionList]
-    return(new)
+  reactions <- unique(reactions)
+  if(consensus == TRUE){
+    return(reactions)
+  } else{
+    return(reactions[!reactions%in%reactionList])
   }
 }
