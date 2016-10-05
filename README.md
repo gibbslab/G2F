@@ -20,6 +20,7 @@ Available functions:
 |Function | Description |
 |:--------|:------------|
 |getReference|Download all the set of gene-associated stoichiometric reactions for a specific organism from the KEGG database|
+|blockedReactions|Identify blocked reactions in a metabolic network|
 
 Citation
 --------
