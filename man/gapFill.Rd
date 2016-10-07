@@ -7,8 +7,19 @@
 gapFill(reactionList, reference, limit = 0.25, woCompartment = FALSE,
   consensus = FALSE)
 }
+\arguments{
+\item{reactionList}{}
+
+\item{reference}{}
+
+\item{limit}{}
+
+\item{woCompartment}{}
+
+\item{consensus}{}
+}
 \description{
-This function identifies the gaps and fills it from the stoichiometric reactions of a reference metabolic reconstruction using a weighting function
+This function identifies the gaps and fills it from the stoichiometric reactions of a reference metabolic reconstruction using a weighting function.
 }
 \author{
 Kelly Botero <kjboteroo@unal.edu.co> - Maintainer: Daniel Osorio <dcosorioh@unal.edu.co>
