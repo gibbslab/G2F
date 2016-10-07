@@ -1,7 +1,5 @@
 #' @author Daniel Camilo Osorio <dcosorioh@unal.edu.co>
-# Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
-# Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
-
+#' @importFrom "utils" "download.file" "read.csv2" "setTxtProgressBar" "txtProgressBar"
 .extract <- function(reaction){
   if (grepl(";",reaction)){
     parts <- unlist(strsplit(reaction,";[[:blank:]]+"))

@@ -1,4 +1,5 @@
 #' @export getReference
+#' @importFrom "KEGGREST" "keggLink" "keggList"
 #' @title Download all the set of gene-associated stoichiometric reactions for a specific organism from the KEGG database
 #' @author Kelly Johana Botero <kjboteroo@unal.edu.co> - Mantainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
 #  Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia

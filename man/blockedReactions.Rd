@@ -16,14 +16,15 @@ A vector with the reaction ids of the blocked reactions
 A blocked reaction in a metabolic network is a reaction that not participate in any optimization solution. This function set as objective function each one of the reactions (one by time) in the model, and identifies the reactions without flux under all scenarios.
 }
 \examples{
+\dontrun{
 # Loading a model for the 'sybil' package
 data("Ec_core")
 
 # Identifying blocked reactions
-blockedReactions(Ec_core)
+blockedReactions(Ec_core)}
 }
 \author{
-Andrés Pinzón <ampinzonv@unal.edu.co> - Mantainer: Daniel Camilo Osorio Hurtado <dcosorioh@unal.edu.co>
+Andres Pinzon-Velasco <ampinzonv@unal.edu.co> - Mantainer: Daniel Camilo Osorio Hurtado <dcosorioh@unal.edu.co>
 }
 \keyword{Blocked}
 \keyword{genome}

@@ -21,7 +21,7 @@ Available functions:
 |:--------|:------------|
 |additionCost|Calculate the cost of addition of a stoichiometric reaction in a metabolic network|
 |blockedReactions|Identify blocked reactions in a metabolic network|
-|gapFill||
+|gapFill|Find and fill gaps in a metabolic network|
 |getReference|Download all the set of gene-associated stoichiometric reactions for a specific organism from the KEGG database|
 
 
