@@ -6,11 +6,18 @@
 #' @title Find and fill gaps in a metabolic network
 #' @description This function identifies the gaps and fills it from the stoichiometric reactions of a reference metabolic reconstruction using a weighting function.
 #' @seealso \code{additionCost} function documentation.
-#' @param reactionList 
-#' @param reference 
-#' @param limit 
-#' @param woCompartment 
-#' @param consensus
+#' @param reactionList A set of stoichiometric reaction with the following format: 
+#' 
+#' \code{"H2O[c] + Urea-1-carboxylate[c] <=> 2 CO2[c] + 2 NH3[c]"} 
+#' 
+#' Where arrows and plus signs are surrounded by a "space character".
+#' It is also expected that stoichiometry coefficients are surrounded by spaces, (nothe the "2" before the CO2[c] or the NH3[c]).
+#' It also expects arrows to be in the form "\code{=>}" or "\code{<=>}". 
+#' Meaning that arrows like "\code{==>}", "\code{<==>}", "\code{-->}" or "\code{->}" will not be parsed and will lead to errors.
+#' @param reference A set of stoichiometric reaction with the same format of reactionList
+#' @param limit An addition cost value to be used as a limit to select reactions to be added. Is calculated as NumberNewMetabolites/NumerOfMetabolites for each reaction.
+#' @param woCompartment A boolean value \code{TRUE} to define if compartment labels should be removed of the reactionList stoichiometric reactions, \code{FALSE} is used as default.
+#' @param consensus A boolean value \code{TRUE} to define if reactionList and newReactions should be reported as a unique vector or \code{FALSE} if just newReactions should be reported.
 #' 
 #' @examples 
 #' \dontrun{

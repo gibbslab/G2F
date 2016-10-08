@@ -8,15 +8,22 @@ gapFill(reactionList, reference, limit = 0.25, woCompartment = FALSE,
   consensus = FALSE)
 }
 \arguments{
-\item{reactionList}{}
+\item{reactionList}{A set of stoichiometric reaction with the following format: 
 
-\item{reference}{}
+\code{"H2O[c] + Urea-1-carboxylate[c] <=> 2 CO2[c] + 2 NH3[c]"} 
 
-\item{limit}{}
+Where arrows and plus signs are surrounded by a "space character".
+It is also expected that stoichiometry coefficients are surrounded by spaces, (nothe the "2" before the CO2[c] or the NH3[c]).
+It also expects arrows to be in the form "\code{=>}" or "\code{<=>}". 
+Meaning that arrows like "\code{==>}", "\code{<==>}", "\code{-->}" or "\code{->}" will not be parsed and will lead to errors.}
 
-\item{woCompartment}{}
+\item{reference}{A set of stoichiometric reaction with the same format of reactionList}
 
-\item{consensus}{}
+\item{limit}{An addition cost value to be used as a limit to select reactions to be added. Is calculated as NumberNewMetabolites/NumerOfMetabolites for each reaction.}
+
+\item{woCompartment}{A boolean value \code{TRUE} to define if compartment labels should be removed of the reactionList stoichiometric reactions, \code{FALSE} is used as default.}
+
+\item{consensus}{A boolean value \code{TRUE} to define if reactionList and newReactions should be reported as a unique vector or \code{FALSE} if just newReactions should be reported.}
 }
 \description{
 This function identifies the gaps and fills it from the stoichiometric reactions of a reference metabolic reconstruction using a weighting function.
