@@ -24,7 +24,7 @@ data("Ec_core")
 blockedReactions(Ec_core)}
 }
 \author{
-Andres Pinzon-Velasco <ampinzonv@unal.edu.co> - Mantainer: Daniel Camilo Osorio Hurtado <dcosorioh@unal.edu.co>
+Andres Pinzon-Velasco <ampinzonv@unal.edu.co> - Mantainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
 }
 \keyword{Blocked}
 \keyword{genome}

@@ -1,6 +1,6 @@
 #' @export blockedReactions
 #' @importFrom "sybil" "optimizeProb"
-#' @author Andres Pinzon-Velasco <ampinzonv@unal.edu.co> - Mantainer: Daniel Camilo Osorio Hurtado <dcosorioh@unal.edu.co>
+#' @author Andres Pinzon-Velasco <ampinzonv@unal.edu.co> - Mantainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
 #' @title Identify blocked reactions in a metabolic network
 #  Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
 #  Experimental and Computational Biochemistry | Pontificia Universidad Javeriana

@@ -1,6 +1,6 @@
 #' @export gapFill
 #' @importFrom "minval" "orphanReactants" "orphanProducts" "reactants" "products"
-#' @author Kelly Botero <kjboteroo@unal.edu.co> - Maintainer: Daniel Osorio <dcosorioh@unal.edu.co>
+#' @author Kelly Botero <kjboteroo@unal.edu.co> - Maintainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
 #  Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
 #  Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
 #' @title Find and fill gaps in a metabolic network
