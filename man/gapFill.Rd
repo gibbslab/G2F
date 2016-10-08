@@ -21,7 +21,29 @@ gapFill(reactionList, reference, limit = 0.25, woCompartment = FALSE,
 \description{
 This function identifies the gaps and fills it from the stoichiometric reactions of a reference metabolic reconstruction using a weighting function.
 }
+\examples{
+\dontrun{
+# Downloading stoichiometric reactions
+all <- getReference(organism = "all",sep = ";")
+eco <- getReference(organism = "eco",sep = ";")
+
+# Filtering reactions
+all <- mapReactions(reactionList = all$reaction\%in\%eco$reaction,
+                    referenceData = all,
+                    by = "bool",
+                    inverse = TRUE)
+                    
+# gapFill
+gapFill(reactionList = eco$reaction,
+        reference = all$reaction, 
+        limit = 0.25,
+        woCompartment = TRUE,
+        consensus = FALSE)}
+}
 \author{
 Kelly Botero <kjboteroo@unal.edu.co> - Maintainer: Daniel Osorio <dcosorioh@unal.edu.co>
+}
+\seealso{
+\code{additionCost} function documentation.
 }
 

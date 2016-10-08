@@ -5,6 +5,7 @@
 #  Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
 #' @title Find and fill gaps in a metabolic network
 #' @description This function identifies the gaps and fills it from the stoichiometric reactions of a reference metabolic reconstruction using a weighting function.
+#' @seealso \code{additionCost} function documentation.
 #' @param reactionList 
 #' @param reference 
 #' @param limit 
@@ -12,16 +13,23 @@
 #' @param consensus
 #' 
 #' @examples 
+#' \dontrun{
 #' # Downloading stoichiometric reactions
 #' all <- getReference(organism = "all",sep = ";")
-#' hsa <- getReference(organism = "hsa",sep = ";")
+#' eco <- getReference(organism = "eco",sep = ";")
 #' 
+#' # Filtering reactions
+#' all <- mapReactions(reactionList = all$reaction%in%eco$reaction,
+#'                     referenceData = all,
+#'                     by = "bool",
+#'                     inverse = TRUE)
+#'                     
 #' # gapFill
-#' gapFill(reactionList = hsa$reaction,
+#' gapFill(reactionList = eco$reaction,
 #'         reference = all$reaction, 
 #'         limit = 0.25,
 #'         woCompartment = TRUE,
-#'         consensus = FALSE)
+#'         consensus = FALSE)}
 
 gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE,consensus=FALSE){
   if(woCompartment==TRUE){
