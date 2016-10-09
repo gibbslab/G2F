@@ -5,7 +5,7 @@
 #  Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
 #  Experimental and Computational Biochemistry | Pontificia Universidad Javeriana
 #' @description This function downloads all the gene-associated stoichiometric reactions for a given organism from the KEGG database. If not valid organism identifier is given, all reactions from the KEGG database are downloaded. GPR are constructed using the KEGG KO association for each enzyme in a specific organism.
-#' @param organism A valid organism identifier for the KEGG database. List of valid organism identifiers are available in: http://rest.kegg.jp/list/organism . If no given, all KEGG stoichiometric reactions are downloaded.
+#' @param organism A valid organism identifier for the KEGG database. List of valid organism identifiers are available in: http://rest.kegg.jp/list/organism. If no given, all KEGG stoichiometric reactions are downloaded.
 #' @param sep A character string to separate the terms.
 #' @return A data.frame with the following data associated to the stoichiometric reactions for a given organism: \itemize{
 #' \item{\code{ko:}} The associated KEGG KO identifier to the reaction. In KEGG, molecular-level functions are stored in the KO (KEGG Orthology) database and associated with ortholog groups in order to enable extension of experimental evidence in a specific organism to other organisms.
