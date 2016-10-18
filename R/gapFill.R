@@ -51,7 +51,7 @@ gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE,c
     message(paste0(length(orphan_r)," Orphan reactants found"))
     to.add <- unique(unlist(lapply(orphan_r,function(orphan){reference[grep(orphan,reactants(reference),fixed = TRUE)]})))
     rxn <- to.add[additionCost(to.add,reactionList)<=limit]
-    if(length(orphan_r)<=length(orphanReactants(c(reactions,rxn)))){
+    if(sum(orphan%in%orphan_r) <= sum(orphan%in%orphanReactants(unique(c(reactions,rxn))))){
       break;
     } else {
       reactions <- unique(c(reactions,rxn))
@@ -63,7 +63,7 @@ gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE,c
     message(paste0(length(orphan_p)," Orphan products found"))
     to.add <- unlist(lapply(orphan_p,function(orphan){reference[grep(orphan,products(reference),fixed = TRUE)]}))
     rxn <- to.add[additionCost(to.add,reactionList)<=limit]
-    if(length(orphan_p)<=length(orphanProducts(c(reactions,rxn)))){
+    if(sum(orphan%in%orphan_p) <= sum(orphan%in%orphanProducts(unique(c(reactions,rxn))))){
       break;
     } else{
       reactions <- unique(c(reactions,rxn))
@@ -76,3 +76,4 @@ gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE,c
     return(reactions[!reactions%in%reactionList])
   }
 }
+
