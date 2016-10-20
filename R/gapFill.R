@@ -46,27 +46,27 @@ gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE,c
   reference <- as.vector(unique(reference))
   orphan <- unique(c(orphanReactants(reactions),orphanProducts(reactions)))
   repeat{
+    ref <- reference[additionCost(reference,reactions)<=limit]
     orphan_r <- orphanReactants(reactions)
     orphan_r <- orphan_r[orphan_r%in%orphan]
     message(paste0(length(orphan_r)," Orphan reactants found"))
-    to.add <- unique(unlist(lapply(orphan_r,function(orphan){reference[grep(orphan,reactants(reference),fixed = TRUE)]})))
-    rxn <- to.add[additionCost(to.add,reactionList)<=limit]
-    if(sum(orphan%in%orphan_r) <= sum(orphan%in%orphanReactants(unique(c(reactions,rxn))))){
+    to.add <- unique(unlist(lapply(orphan_r,function(orphan){ref[grep(orphan,reactants(ref),fixed = TRUE)]})))
+    if(sum(orphan%in%orphan_r) <= sum(orphan%in%orphanReactants(unique(c(reactions,to.add))))){
       break;
     } else {
-      reactions <- unique(c(reactions,rxn))
+      reactions <- unique(c(reactions,to.add))
     }
   }
   repeat{
+    ref <- reference[additionCost(reference,reactions)<=limit]
     orphan_p <- orphanProducts(reactions)
     orphan_p <- orphan_p[orphan_p%in%orphan]
     message(paste0(length(orphan_p)," Orphan products found"))
-    to.add <- unlist(lapply(orphan_p,function(orphan){reference[grep(orphan,products(reference),fixed = TRUE)]}))
-    rxn <- to.add[additionCost(to.add,reactionList)<=limit]
-    if(sum(orphan%in%orphan_p) <= sum(orphan%in%orphanProducts(unique(c(reactions,rxn))))){
+    to.add <- unlist(lapply(orphan_p,function(orphan){ref[grep(orphan,products(ref),fixed = TRUE)]}))
+    if(sum(orphan%in%orphan_p) <= sum(orphan%in%orphanProducts(unique(c(reactions,to.add))))){
       break;
     } else{
-      reactions <- unique(c(reactions,rxn))
+      reactions <- unique(c(reactions,to.add))
     }
   }
   reactions <- unique(reactions)
