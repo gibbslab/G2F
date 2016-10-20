@@ -24,6 +24,9 @@ blockedReactions <- function(model){
     model@obj_coef[reaction] <- 1
     FBA <- sybil::optimizeProb(model)
     locked <- unique(c(locked, model@react_id[as.vector(FBA@fluxdist@fluxes!=0)]))
+    model@obj_coef[reaction] <- -1
+    FBA <- sybil::optimizeProb(model)
+    locked <- unique(c(locked, model@react_id[as.vector(FBA@fluxdist@fluxes!=0)]))
   }
   close(pb)
   locked <- model@react_id[!model@react_id%in%locked]
