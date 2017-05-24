@@ -1,0 +1,23 @@
+os: 
+- linux
+
+language: r
+r:
+  - oldrel
+  - release
+  - devel
+  
+apt_packages:
+  - libxml2-dev 
+  - libglpk-dev
+
+r_packages:
+  - minval
+  - sybil
+  - glpkAPI
+  
+bioc_packages:
+  - KEGGREST
+  
+cache: packages
+sudo: false
