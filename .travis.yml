@@ -20,4 +20,4 @@ bioc_packages:
   - KEGGREST
   
 cache: packages
-sudo: false
+sudo: required
