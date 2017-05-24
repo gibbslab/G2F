@@ -9,6 +9,7 @@ r:
   
 apt_packages:
   - libxml2-dev 
+  - glpk
   - glpk-utils
   - libglpk-dev
 
