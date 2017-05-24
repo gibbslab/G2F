@@ -13,6 +13,9 @@ apt_packages:
   - glpk-utils
   - libglpk-dev
 
+brew_packages:
+  - glpk
+
 r_packages:
   - minval
   - sybil
