@@ -20,6 +20,8 @@ r_packages:
   
 bioc_packages:
   - KEGGREST
-  
+
+script:
+  - sudo ldconfig
 cache: packages
 sudo: required
