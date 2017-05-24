@@ -35,4 +35,3 @@ additionCost(reaction = "alpha-Amino acid + H2O + NAD+ <=> 2-Oxo acid + Ammonia 
 \author{
 Daniel Camilo Osorio <dcosorioh@unal.edu.co>
 }
-
