@@ -26,10 +26,7 @@
 #' eco <- getReference(organism = "eco",sep = ";")
 #' 
 #' # Filtering reactions
-#' all <- mapReactions(reactionList = all$reaction%in%eco$reaction,
-#'                     referenceData = all,
-#'                     by = "bool",
-#'                     inverse = TRUE)
+#' all <- all[!(all$reaction %in% eco$reaction),]
 #'                     
 #' # gapFill
 #' gapFill(reactionList = eco$reaction,
@@ -39,42 +36,68 @@
 #'         consensus = FALSE)}
 
 gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE,consensus=FALSE){
-  if(woCompartment==TRUE){
-    reactionList <- gsub("\\[[[:alnum:]]*(\\_)?[[:alnum:]]*\\]$","",as.vector(reactionList))
-  }
+  
+  # Setting list as vector
   reactions <- as.vector(unique(reactionList))
   reference <- as.vector(unique(reference))
+  
+  # Check the syntax
+  if(isTRUE(any(validateSyntax(reactions)=="FALSE") | any(validateSyntax(reference)=="FALSE"))){
+    stop("Syntax error found in the stoichiometric reactions")
+  }
+
+  # Remove the compartments
+  if(woCompartment==TRUE){
+    reactions <- gsub("\\[[[:alnum:]]*(\\_)?[[:alnum:]]*\\]$","",as.vector(reactions))
+  }
+  
   # Extract all orphan metabolites from reactionList (OrphanOriginal)
-  orphan <- unique(c(orphanReactants(reactions),orphanProducts(reactions)))
+  orphan <- orphanMetabolites(reactionList =  reactions)
+  
+  # Extract all reactants
+  reactantsReference <- lapply(reference, function(reaction){reactants(reaction)})
+  
+  # Extract all products
+  productsReference <- lapply(reference, function(reaction){products(reaction)})
+  
   # do
   repeat{
     # Compute the addition cost for all stoichiometric reactions from the reference
     # Select stoichiometric reactions with additionCost lower or equal than limit
-    ref <- reference[additionCost(reference,reactions)<=limit]
+    belowLimit <- additionCost(reference = reactions,reaction = reference) <= limit
     # Extract all orphan reactants from reactionList
-    orphan_r <- orphanReactants(reactions)
+    orphanR <- orphanReactants(reactions)
     # Count the number of orphan reactants that are in orphanOriginal
-    orphan_r <- orphan_r[orphan_r%in%orphan]
-    message(paste0(length(orphan_r)," Orphan reactants found"))
+    orphanR <- orphanR[orphanR %in% orphan]
+    message(paste0(length(orphanR)," Orphan reactants found"))
     # Identify the reactions that contain orphan reactants in selected stoichiometric reactions
-    to.add <- unique(unlist(lapply(orphan_r,function(orphan){ref[grep(orphan,reactants(ref),fixed = TRUE)]})))
+    includeOrphan <- unlist(lapply(reactantsReference, function(reaction){any(reaction%in%orphanR)}))
+    # Select reactions to be added
+    toAdd <- reference[includeOrphan & belowLimit]
     # If the number of orphanOriginals \in OrphanReactant is lower than OrphanOriginals \in orphanReactant \in orphans(reactionList \cup to.add)
-    if(sum(orphan%in%orphan_r) <= sum(orphan%in%orphanReactants(unique(c(reactions,to.add))))){
+    if(all(orphanR %in% orphanReactants(c(reactions,toAdd)))){
       break;
     } else {
-      reactions <- unique(c(reactions,to.add))
+      reactions <- unique(c(reactions,toAdd))
     }
   }
   repeat{
-    ref <- reference[additionCost(reference,reactions)<=limit]
-    orphan_p <- orphanProducts(reactions)
-    orphan_p <- orphan_p[orphan_p%in%orphan]
-    message(paste0(length(orphan_p)," Orphan products found"))
-    to.add <- unlist(lapply(orphan_p,function(orphan){ref[grep(orphan,products(ref),fixed = TRUE)]}))
-    if(sum(orphan%in%orphan_p) <= sum(orphan%in%orphanProducts(unique(c(reactions,to.add))))){
+    # Compute the addition cost for all stoichiometric reactions from the reference
+    # Select stoichiometric reactions with additionCost lower or equal than limit
+    belowLimit <- additionCost(reference = reactions,reaction = reference) <= limit
+    # Extract all orphan products from reactionList
+    orphanP <- orphanProducts(reactions)
+    # Count the number of orphan reactants that are in orphanOriginal
+    orphanP <- orphanP[orphanP%in%orphan]
+    message(paste0(length(orphanP)," Orphan products found"))
+    # Identify the reactions that contain orphan reactants in selected stoichiometric reactions
+    includeOrphan <- unlist(lapply(productsReference, function(reaction){any(reaction%in%orphanP)}))
+    # Select reactions to be added
+    toAdd <- reference[includeOrphan & belowLimit]
+    if(all(orphanP %in% orphanReactants(c(reactions,toAdd)))){
       break;
-    } else{
-      reactions <- unique(c(reactions,to.add))
+    } else {
+      reactions <- unique(c(reactions,toAdd))
     }
   }
   reactions <- unique(reactions)
