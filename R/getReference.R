@@ -26,7 +26,7 @@
 getReference<-function(organism = "all",sep = ";"){
   # Downloading organism
   kegg_download <- tempdir()
-  download.file("rest.kegg.jp/list/organism",paste0(kegg_download,"organism.txt"),quiet = TRUE)
+  download.file("rest.kegg.jp/list/organism",paste0(kegg_download,"organism.txt"),quiet = TRUE, method = "libcurl")
   kegg_organism <- as.data.frame.array(read.csv2(paste0(kegg_download,"organism.txt"),header = FALSE,sep ="\t"))
   organism <- match(x = organism,table = kegg_organism[,2])
   ifelse(test = is.na(organism),yes = organism <- "all",no = organism <- kegg_organism[organism,2])

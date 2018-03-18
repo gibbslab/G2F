@@ -47,10 +47,9 @@ gapFill(reactionList = eco$reaction,
         woCompartment = TRUE,
         consensus = FALSE)}
 }
-\author{
-Kelly Botero <kjboteroo@unal.edu.co> - Maintainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
-}
 \seealso{
 \code{additionCost} function documentation.
 }
-
+\author{
+Kelly Botero <kjboteroo@unal.edu.co> - Maintainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
+}

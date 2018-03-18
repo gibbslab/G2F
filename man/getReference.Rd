@@ -7,7 +7,7 @@
 getReference(organism = "all", sep = ";")
 }
 \arguments{
-\item{organism}{A valid organism identifier for the KEGG database. List of valid organism identifiers are available in: http://rest.kegg.jp/list/organism . If no given, all KEGG stoichiometric reactions are downloaded.}
+\item{organism}{A valid organism identifier for the KEGG database. List of valid organism identifiers are available in: http://rest.kegg.jp/list/organism. If no given, all KEGG stoichiometric reactions are downloaded.}
 
 \item{sep}{A character string to separate the terms.}
 }
@@ -31,11 +31,11 @@ This function downloads all the gene-associated stoichiometric reactions for a g
 getReference(organism = "hsa",sep = ";")
 }
 }
-\author{
-Kelly Johana Botero <kjboteroo@unal.edu.co> - Mantainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
-}
 \seealso{
 The KEGG database webpage: http://www.genome.jp/kegg/
+}
+\author{
+Kelly Johana Botero <kjboteroo@unal.edu.co> - Mantainer: Daniel Camilo Osorio <dcosorioh@unal.edu.co>
 }
 \keyword{Download}
 \keyword{genome}
@@ -43,4 +43,3 @@ The KEGG database webpage: http://www.genome.jp/kegg/
 \keyword{reconstruction}
 \keyword{reference}
 \keyword{scale}
-
