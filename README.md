@@ -11,7 +11,7 @@ For install the latest stable version this package directly from GitHub:
 # Install 'devtools' R package
 install.packages("devtools")
 
-# Install 'minval' package
+# Install 'g2f' package
 devtools::install_github("gibbslab/g2f")
 library("g2f")
 ```
