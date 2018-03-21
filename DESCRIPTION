@@ -1,11 +1,11 @@
 Package: g2f
 Type: Package
 Title: Find and Fill Gaps in Metabolic Networks
-Version: 0.2
-Authors@R: c(person("Daniel","Osorio",email="dcosorioh@unal.edu.co",role=c("aut","cre")),
-             person("Kelly","Botero",role=c("aut")),
+Version: 0.3
+Authors@R: c(person("Kelly","Botero",role=c("aut")),
+             person("Daniel","Osorio",email="dcosorioh@unal.edu.co",role=c("aut","cre")),
              person("Janneth","Gonzalez",role=c("aut","ths")),
-             person("Andres","Pinzon", role=c("aut"))
+             person("Andres","Pinzon", role=c("aut","ths"))
              )
 Description: For a given metabolic network, this package finds the gaps (metabolites not produced or not consumed in any other reaction), and fills it from the stoichiometric reactions of a reference metabolic reconstruction using a weighting function. Also the option to download all the set of gene-associated stoichiometric reactions for a specific organism from the KEGG database <http://www.genome.jp/kegg/> is available.
 Imports: KEGGREST, minval (>= 0.5), sybil

@@ -46,7 +46,7 @@ getReference<-function(organism = "all",sep = ";"){
   # Setting up a specific organism
   if(organism != "all"){
     ko_o <- keggLink(organism, "ko")
-    ko_o <- cbind(ko=as.vector(gsub("ko:","",names(ko_o))),unigene=as.vector(regmatches(ko_o,regexpr("[[:digit:]]+",ko_o))))
+    ko_o <- cbind(ko=as.vector(gsub("ko:","",names(ko_o))),unigene=gsub("^[[:print:]]+:","",ko_o))
     ko_o <- as.data.frame(cbind(ko=unique(ko_o[,"ko"]),gpr=sapply(unique(ko_o[,"ko"]), function(ko){paste("(",paste0(ko_o[ko_o[,"ko"]%in%ko,2],collapse = " and "),")")})))
     reaction_all <- merge(reaction_all,ko_o,by.x = "ko",by.y = "ko",all.x = TRUE)
     reaction_all <- reaction_all[reaction_all[,"ko"]%in%ko_o[,"ko"],]
