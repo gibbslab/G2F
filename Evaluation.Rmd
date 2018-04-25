@@ -1,0 +1,235 @@
+---
+title: "Evaluation"
+author: "Tain Velasco Luquez"
+date: "19/04/2018"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Opening
+This file contain sthe comparison of g2f against other widely used algortihms to find a nd fill gaps in GEMs.
+
+### Required packages
+```{r message=FALSE}
+library("minval")
+library("sybilSBML")
+library("sybil")
+library("glpkAPI")
+library("g2f")
+library("tictoc")
+library("readr")
+```
+
+### Useful functions
+
+If the models has some syntax incompatibilities, this functions enables the localisation of the incompatibilities and replace them by the user define syntax.
+```{r message=FALSE}
+# FUN by Theodore lytras in https://stackoverflow.com/questions/15253954/replace-multiple-letters-with-accents-with-gsub/15256643?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+mgsub <- function(pattern, replacement, x, ...) {
+  if (length(pattern)!=length(replacement)) {
+    stop("pattern and replacement do not have the same length.")
+  }
+  result <- x
+  for (i in 1:length(pattern)) {
+    result <- gsub(pattern[i], replacement[i], result, ...)
+  }
+  result
+}
+```
+
+This functions retrieves an organism's GEM, in .xml extension from biomodels, and the complete set of reactions, in .csv extension from KEGG.
+```{r message=FALSE}
+my_models <- function(biomodel_ID, kegg_ID){
+  # Both arguments must be of class character
+  # Go to http://rest.kegg.jp/list/organism for the KEGG_ID code
+  # Go to https://wwwdev.ebi.ac.uk/biomodels/ for the BioModel ID
+  
+  # Let's replace the url for the selected biomodel ID
+  my_model_url <- gsub("MODEL(.{10})", biomodel_ID, "https://wwwdev.ebi.ac.uk/biomodels/model/download/MODEL1507180017.2?filename=MODEL1507180017_url.xml")
+  
+  # And download it
+  download.file(my_model_url, paste0(kegg_ID, ".xml"))
+  
+  # Now lets get the reaction list and save it
+  write.csv(g2f::getReference(kegg_ID), file = paste0(kegg_ID, "_all.csv"))
+  
+  message("It's done MTF! -.-")
+}
+```
+
+Extract reactions from a model
+```{r message=FALSE}
+# Function extracted from MinVal, by aniel Osorio
+# modelData must be of class modelorg and kegg_ID of class character
+my_reactions <- function(modelData, kegg_ID){
+  
+  modelData <- minval:::convertData(model = modelData)
+ 
+  outputData <- NULL
+  outputData$abbreviation <- modelData[["ID"]]
+  outputData$name <- modelData[["DESCRIPTION"]]
+  outputData$equation <- minval:::rearmReactions(S = minval::stoichiometricMatrix(modelData[["REACTION"]]), 
+    reversible = grepl("<=>", modelData[["REACTION"]]), 
+    type = "TSV", boundary = boundary)
+  outputData$reversible <- ifelse(test = grepl("<=>", modelData[["REACTION"]]), 
+    yes = "reversible", no = "irreversible")
+  outputData$compartment <- unlist(lapply(modelData[["REACTION"]], 
+    function(reaction) {
+      paste0(minval::compartments(reaction), collapse = " , ")
+    }))
+  outputData$lowbnd <- as.character(modelData[["LOWER.BOUND"]])
+  outputData$uppbnd <- as.character(modelData[["UPPER.BOUND"]])
+  outputData$obj_coef <- as.character(modelData[["OBJECTIVE"]])
+  outputData$rule <- modelData[["GPR"]]
+  outputData$subsystem <- rep("", length(modelData[["REACTION"]]))
+  outputData <- data.frame(outputData)
+  
+  write.table(outputData, file = paste0(kegg_ID, "_react.csv"), 
+    quote = TRUE, row.names = FALSE, sep = ",")
+}
+```
+
+## Warming up
+
+We are going to load several GEMs their reaction lists and complete set of reactions from KEGG.
+```{r message=FALSE}
+# Download the models and its associated KEGG reactions
+mapply(my_models, c("MODEL1507180048", "MODEL1507180017"), c("tma", "stm"))
+
+# Load all .xml models in the working directory to the .GlobalEnv and rename them adding _model
+for (i in as.list(list.files(pattern = "\\.xml$"))) {
+  assign(gsub(".xml", "_model", i), sybilSBML::readSBMLmod(i), envir = .GlobalEnv)
+}
+# Load all reaction lists from KEGG per model 
+for (i in as.list(list.files(pattern = "\\_all.csv$"))) {
+  assign(gsub(".csv", "", i), read.csv(i), envir = .GlobalEnv)
+}
+
+# Extract the reaction list of every .xml file in the working directory, save such reaction list to a .csv with the same name as the model
+mapply(my_reactions, mget(setdiff(ls(pattern = "model"), lsf.str())), gsub("_all.csv", "", list.files(pattern = "\\_all.csv$")))
+
+# And load them to the workspace
+for (i in as.list(list.files(pattern = "\\_react.csv$"))) {
+  assign(gsub(".csv", "", i), read.csv(i), envir = .GlobalEnv)
+}
+```
+
+Inasmuch as the gap filling functions is sensitive to incorrect syntax, let's check it's correctness
+```{r}
+# Is the syntax for the models correct?
+sapply(mget(setdiff(ls(pattern = "react"), lsf.str())), function(i) {
+  suppressMessages(suppressWarnings(sum(
+    minval::validateSyntax(reactionList = i$equation)
+  ) == nrow(i)))
+})
+```
+
+As seen, the reaction list have an incorrect syntax. General mistakes are described in `r ?minval::validateSyntax `. Let's fix them:
+```{r message=FALSE, eval=FALSE}
+# Value for all data files (excluding functions) in the global environment are returned in the form of list
+temp_var <- mget(setdiff(ls(pattern = "react"), lsf.str()))
+
+sapply(temp_var[[i]][, 3], function(i) {
+  assign(temp_var[[i]][, 3], mgsub(
+    c("-->", '<==>', '->', "\\(|\\)"),
+    c("=>", '<=>', "=>", ""),
+    temp_var[[i]][, 3]
+  ), envir = .GlobalEnv)
+})
+
+
+
+```
+```{r}
+stm_react$equation <- mgsub(c("-->", '<==>', '->', "\\(|\\)"), c("=>", '<=>', "=>", ""), stm_react$equation)
+
+tma_react$equation <- mgsub(c("-->", '<==>', '->', "\\(|\\)"), c("=>", '<=>', "=>", ""), tma_react$equation)
+
+# Is the syntax for the models correct?
+sapply(mget(setdiff(ls(pattern = "react"), lsf.str())), function(i) {
+  suppressMessages(suppressWarnings(sum(
+    minval::validateSyntax(reactionList = i$equation)
+  ) == nrow(i)))
+})
+```
+
+## The workout
+Once the syntax is checked, it is time to do the gapfinding and gapfilling
+```{r}
+# lets fire it up !
+tictoc::tic("Gapfilling time")
+gapFill(reactionList = unlist(stm_react$equation),
+  reference = stm_all$reaction,
+  limit = 0.25,
+  woCompartment = TRUE,
+  consensus = FALSE)
+tictoc::toc()
+
+#1050 Orphan reactants found
+#Error in reactionList[validateSyntax(reactionList)] : 
+#  invalid subscript type 'list'
+```
+
+## Now in pyhton
+Inasmuch as it is somewhat troublesome to import a model in 
+```{python}
+# Tain Velasco-Luquez
+# taveluz@javeriana.edu.co
+
+# This script will get a .xml GEM and a metabolite name. It will retrieve the following info:
+#  1. The GEM dimensions
+#  2. The number of reactions your metabolites participate in
+#  3. The number of blocked reactions and its execution time
+#  4. Gap filling time, No reactions added, id added reactions
+
+# The number of gaps created after deleting all reactions in which the given metabolite participate in
+#  3. The file called model_universal containing the reactions deleted from the model,
+#  4. The file model_gaps.xml containing the model with the gaps created
+#  5.
+#  6. The execution time for calculation of blo
+from __future__ import print_function
+from cobra.flux_analysis import gapfill
+import cobra.test, time
+
+
+def my_gems_gaps(model, metabo_code):
+    # Printing the GEM dimmensions
+    print( "GEM dimmensions (reactionsxmetabolites): {} x {}".format( len( model.reactions ),
+                                                                      len( model.metabolites ) ) )
+    # Number of reactions the metabolite is participating in
+    print( "Your metabolite participate in {} reactions".format( len( model.metabolites.metabo_code.reactions ) ) )
+
+    # Initialising universal and deleting the reactions associated to the metabolite
+    universal = cobra.Model( "universal_reactions" )
+    for i in [i.id for i in model.metabolites.metabo_code.reactions]:
+        reaction = model.reactions.get_by_id( i )
+        universal.add_reaction( reaction.copy( ) )
+        model.remove_reactions( [reaction] )
+
+    # Number of blocked reactions
+    start_time = time.time( )
+    model_blocked_reactions = cobra.flux_analysis.find_blocked_reactions( model )
+    print( "The number of blocked reactions after creating the gaps is {}".format( len( model_blocked_reactions ) ) )
+    print( "Calculate the number of blocked reaction took %s seconds " % (time.time( ) - start_time) )
+
+    # Gap filling
+    start_time = time.time( )
+    solution = gapfill( model, universal )
+    print( "Gap filling process took %s seconds " % (time.time( ) - start_time) )
+    print( "The number of filled reactions is:".format( len( solution.reactions ) ) )
+    print( "These reactions are:" )
+    for reaction in solution[0]:
+        print( reaction.id )
+
+    # Exporting the files
+    cobra.io.write_sbml_model( model, "model.xml" )
+    cobra.io.write_sbml_model( universal, "universal.xml" )
+
+```
+
+
