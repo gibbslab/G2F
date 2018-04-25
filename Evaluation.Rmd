@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Opening
-This file contain sthe comparison of g2f against other widely used algortihms to find a nd fill gaps in GEMs.
+This file contain sthe comparison of g2f against other widely used algortihms to find and fill gaps in GEMs.
 
 ### Required packages
 ```{r message=FALSE}
@@ -27,7 +27,7 @@ library("readr")
 
 ### Useful functions
 
-If the models has some syntax incompatibilities, this functions enables the localisation of the incompatibilities and replace them by the user define syntax.
+If the models has some syntax incompatibilities, this function enables the localisation of the incompatibilities and replace them by the user define syntax.
 ```{r message=FALSE}
 # FUN by Theodore lytras in https://stackoverflow.com/questions/15253954/replace-multiple-letters-with-accents-with-gsub/15256643?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 mgsub <- function(pattern, replacement, x, ...) {
@@ -42,7 +42,7 @@ mgsub <- function(pattern, replacement, x, ...) {
 }
 ```
 
-This functions retrieves an organism's GEM, in .xml extension from biomodels, and the complete set of reactions, in .csv extension from KEGG.
+This function retrieves an organism's GEM, in .xml extension from biomodels, and the complete set of reactions, in .csv extension from KEGG.
 ```{r message=FALSE}
 my_models <- function(biomodel_ID, kegg_ID){
   # Both arguments must be of class character
@@ -64,7 +64,7 @@ my_models <- function(biomodel_ID, kegg_ID){
 
 Extract reactions from a model
 ```{r message=FALSE}
-# Function extracted from MinVal, by aniel Osorio
+# Function extracted from MinVal, by Daniel Osorio
 # modelData must be of class modelorg and kegg_ID of class character
 my_reactions <- function(modelData, kegg_ID){
   
@@ -119,7 +119,7 @@ for (i in as.list(list.files(pattern = "\\_react.csv$"))) {
 }
 ```
 
-Inasmuch as the gap filling functions is sensitive to incorrect syntax, let's check it's correctness
+Inasmuch as the gap filling function is sensitive to incorrect syntax, let's check it's correctness
 ```{r}
 # Is the syntax for the models correct?
 sapply(mget(setdiff(ls(pattern = "react"), lsf.str())), function(i) {
@@ -170,65 +170,48 @@ gapFill(reactionList = unlist(stm_react$equation),
   consensus = FALSE)
 tictoc::toc()
 
-#1050 Orphan reactants found
-#Error in reactionList[validateSyntax(reactionList)] : 
-#  invalid subscript type 'list'
 ```
 
 ## Now in pyhton
-Inasmuch as it is somewhat troublesome to import a model in 
+Now lets compare the g2f results against the gapfill algorithm implemented in Copbrapy
 ```{python}
-# Tain Velasco-Luquez
-# taveluz@javeriana.edu.co
-
-# This script will get a .xml GEM and a metabolite name. It will retrieve the following info:
-#  1. The GEM dimensions
-#  2. The number of reactions your metabolites participate in
-#  3. The number of blocked reactions and its execution time
-#  4. Gap filling time, No reactions added, id added reactions
-
-# The number of gaps created after deleting all reactions in which the given metabolite participate in
-#  3. The file called model_universal containing the reactions deleted from the model,
-#  4. The file model_gaps.xml containing the model with the gaps created
-#  5.
-#  6. The execution time for calculation of blo
+# Importing the modules
 from __future__ import print_function
 from cobra.flux_analysis import gapfill
 import cobra.test, time
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import glob
+```
 
+# In order to supplement the universal reaction files to the gapfill algorithm, we are going to:
+1. Read several .csv files at once
+```{python}
+all_all = {}
+for file_all in glob.glob( '*_all.csv' ):
+    name = os.path.splitext( file_all )[0]
+    all_all[name] = cobra.Model( pd.read_csv( file_all ) )
+```
 
-def my_gems_gaps(model, metabo_code):
-    # Printing the GEM dimmensions
-    print( "GEM dimmensions (reactionsxmetabolites): {} x {}".format( len( model.reactions ),
-                                                                      len( model.metabolites ) ) )
-    # Number of reactions the metabolite is participating in
-    print( "Your metabolite participate in {} reactions".format( len( model.metabolites.metabo_code.reactions ) ) )
+2. Import the models
+```{python}
+all_model = {}
+for file_model in glob.glob( '*.xml' ):
+    name = os.path.splitext( file_model )[0]
+    all_model[name] = cobra.io.read_sbml_model( file_model )
+```    
 
-    # Initialising universal and deleting the reactions associated to the metabolite
-    universal = cobra.Model( "universal_reactions" )
-    for i in [i.id for i in model.metabolites.metabo_code.reactions]:
-        reaction = model.reactions.get_by_id( i )
-        universal.add_reaction( reaction.copy( ) )
-        model.remove_reactions( [reaction] )
+3. let's gapfill them!
+```{python}
+solution={}
 
-    # Number of blocked reactions
+for every_model_key, every_all_key in zip(all_model.keys(), all_all.keys() ):
+
     start_time = time.time( )
-    model_blocked_reactions = cobra.flux_analysis.find_blocked_reactions( model )
-    print( "The number of blocked reactions after creating the gaps is {}".format( len( model_blocked_reactions ) ) )
-    print( "Calculate the number of blocked reaction took %s seconds " % (time.time( ) - start_time) )
-
-    # Gap filling
-    start_time = time.time( )
-    solution = gapfill( model, universal )
+    solution[every_model_key] = gapfill( every_model_key, every_all_key )
     print( "Gap filling process took %s seconds " % (time.time( ) - start_time) )
-    print( "The number of filled reactions is:".format( len( solution.reactions ) ) )
-    print( "These reactions are:" )
-    for reaction in solution[0]:
-        print( reaction.id )
-
-    # Exporting the files
-    cobra.io.write_sbml_model( model, "model.xml" )
-    cobra.io.write_sbml_model( universal, "universal.xml" )
+    print( "The number of filled reactions is:".format( len( solution.key( )[every_model_key].reactions ) ) )
 
 ```
 
