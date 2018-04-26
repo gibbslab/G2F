@@ -58,7 +58,7 @@ my_models <- function(biomodel_ID, kegg_ID){
   # Now lets get the reaction list and save it
   write.csv(g2f::getReference(kegg_ID), file = paste0(kegg_ID, "_all.csv"))
   
-  message("It's done MTF! -.-")
+  message("It's done!")
 }
 ```
 
