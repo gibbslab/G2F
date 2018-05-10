@@ -25,26 +25,35 @@
 #' @keywords Download reference genome scale metabolic reconstruction
 getReference<-function(organism = "all",sep = ";"){
   # Downloading organism
+  message("Validating selected organism ... ", appendLF = FALSE)
   kegg_download <- tempdir()
   download.file("rest.kegg.jp/list/organism",paste0(kegg_download,"organism.txt"),quiet = TRUE, method = "libcurl")
   kegg_organism <- as.data.frame.array(read.csv2(paste0(kegg_download,"organism.txt"),header = FALSE,sep ="\t"))
   organism <- match(x = organism,table = kegg_organism[,2])
   ifelse(test = is.na(organism),yes = organism <- "all",no = organism <- kegg_organism[organism,2])
+  message("OK")
   # Downloading all reactions
+  message("Downloading reactions ... ", appendLF = FALSE)
   reaction_all <- data.frame(keggList("reaction"))
   id <- as.vector(regmatches(rownames(reaction_all),regexpr("R[[:digit:]]+",rownames(reaction_all))))
   reaction <- as.vector(sapply(as.vector(reaction_all[,1]), .extract))
+  message("DONE")
   # Downloading enzyme association
+  message("Downloading enzymes ... ", appendLF = FALSE)
   ez_all <- keggLink("enzyme","reaction")
   ez_all <- as.data.frame(cbind(id=as.vector(gsub("rn:","",names(ez_all))),ec=as.vector(gsub("ec:","",ez_all))))
   reaction_all <- as.data.frame(cbind(id,reaction))
   reaction_all <- merge(reaction_all,ez_all,by.x="id",by.y = "id",all.x = TRUE)
+  message("DONE")
   # Downloading KO association
+  message("Downloading KO ... ", appendLF = FALSE)
   ko_all <- keggLink("ko", "reaction")
   ko_all <- cbind(id=gsub("rn:","",names(ko_all)),ko=gsub("ko:","",as.vector(ko_all)))
   reaction_all<-merge(reaction_all,ko_all,by.x = "id",by.y = "id",all.x = TRUE)
+  message("DONE")
   # Setting up a specific organism
   if(organism != "all"){
+    message("Building organism specific reference ... ")
     ko_o <- keggLink(organism, "ko")
     ko_o <- cbind(ko=as.vector(gsub("ko:","",names(ko_o))),unigene=gsub("^[[:print:]]+:","",ko_o))
     ko_o <- as.data.frame(cbind(ko=unique(ko_o[,"ko"]),gpr=sapply(unique(ko_o[,"ko"]), function(ko){paste("(",paste0(ko_o[ko_o[,"ko"]%in%ko,2],collapse = " and "),")")})))
@@ -61,6 +70,29 @@ getReference<-function(organism = "all",sep = ";"){
     reaction_all[,"ko"] <- sapply(as.vector(reaction_all[,"id"]),summary.ko)
     reaction_all[,"gpr"] <- sapply(as.vector(reaction_all[,"id"]),summary.gpr)
     reaction_all <- unique(reaction_all)
+    # Downloading directions
+    message("Setting directionality ... ", appendLF = FALSE)
+    direction <- lapply(names(keggList("pathway","sot")),function(x){suppressMessages(keggGet(x,"kgml"))})
+    direction <- lapply(direction, function(b){
+      b <- unlist(strsplit(b,"\n"))
+      b <- b[grepl('\\<reaction[[:space:]]+',b)]
+      b <- do.call(rbind.data.frame,strsplit(b,'\"'))[,c(4,6)]
+      colnames(b) <- c("rxn","rev")
+      return(b)
+    })
+    direction <- do.call(rbind.data.frame,direction)
+    direction <- apply(direction,1,function(x){
+      expand.grid(unlist(strsplit(x[[1]],"[[:space:]]+")),x[[2]])
+    })
+    direction <- unique(do.call(rbind.data.frame,direction))
+    direction[,1] <- gsub("rn:","",direction[,1])
+    tdirection <- table(direction[,1])
+    direction[tdirection>1,2] <- "reversible"
+    direction <- unique(direction)
+    direction <- direction[direction[,2] == "irreversible",1]
+    reaction_all <- as.data.frame.array(reaction_all)
+    reaction_all$reaction[reaction_all$id %in% direction] <- gsub("<=>","=>",reaction_all$reaction[reaction_all$id %in% direction])
+    message("DONE")
   }
   summary.ec <- function(id){
   data <- reaction_all[reaction_all[,"id"]%in%id,]
@@ -71,5 +103,6 @@ getReference<-function(organism = "all",sep = ";"){
   reaction_all <- unique(reaction_all)
   rownames(reaction_all) <- NULL
   # Return
+  message("DONE")
   return(reaction_all)
 }
