@@ -14,8 +14,8 @@ gapFind <- function(reactionList, removeExchange = FALSE){
       reactionList <- reactionList[!minval:::reactionType(reactionList = reactionList) == "Exchange reaction"]
     }
     gaps <- list()
-    gaps$input <- orphanReactants(reactionList = reactionList)
-    gaps$output <- orphanProducts(reactionList = reactionList)
+    gaps$uptake <- orphanReactants(reactionList = reactionList)
+    gaps$release <- orphanProducts(reactionList = reactionList)
     return(gaps)
   }
 }
