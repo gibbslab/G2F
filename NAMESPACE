@@ -3,6 +3,7 @@
 export(additionCost)
 export(blockedReactions)
 export(gapFill)
+export(gapFind)
 export(getReference)
 importFrom("KEGGREST","keggGet")
 importFrom("KEGGREST","keggLink")
