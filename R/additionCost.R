@@ -39,9 +39,15 @@
 #' additionCost(reactionList = example_reactionList, reference = example_reference)
 #' # [1] 0.5000000 0.3333333
 additionCost <- function(reactionList,reference){
+  if(class(reactionList) == "modelorg"){
+    reactionList <- model2string(model = reactionList)
+  }
+  if(class(reference) == "modelorg"){
+    reference <- model2string(model = reference)
+  }
   mets_r <- metabolites(reference)
   mets <- lapply(reactionList,metabolites)
-  mets <- lapply(mets, function(metabolites){table(metabolites%in%mets_r)})
+  mets <- lapply(mets, function(metabolites){table(metabolites %in% mets_r)})
   cost <- lapply(mets, function(metabolites){metabolites["FALSE"]/sum(metabolites)})
   cost[is.na(cost)] <- 0
   cost <- as.vector(unlist(cost))
