@@ -47,9 +47,6 @@ additionCost <- function(reactionList,reference){
   }
   mets_r <- metabolites(reference)
   mets <- lapply(reactionList,metabolites)
-  mets <- lapply(mets, function(metabolites){table(metabolites %in% mets_r)})
-  cost <- lapply(mets, function(metabolites){metabolites["FALSE"]/sum(metabolites)})
-  cost[is.na(cost)] <- 0
-  cost <- as.vector(unlist(cost))
+  cost <- unlist(lapply(mets, function(metabolites){mean(!metabolites %in% mets_r)}))
   return(cost)
 }
