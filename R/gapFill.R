@@ -37,51 +37,52 @@
 #'         limit = 0.25,
 #'         woCompartment = TRUE,
 #'         consensus = FALSE)}
-
 gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE,consensus=FALSE){
-  if(woCompartment==TRUE){
-    reactionList <- gsub("\\[[[:alnum:]]*(\\_)?[[:alnum:]]*\\]$","",as.vector(reactionList))
-  }
-  reactions <- as.vector(unique(reactionList))
-  reference <- as.vector(unique(reference))
-  # Extract all orphan metabolites from reactionList (OrphanOriginal)
-  orphan <- unique(c(orphanReactants(reactions),orphanProducts(reactions)))
-  # do
-  repeat{
-    # Compute the addition cost for all stoichiometric reactions from the reference
-    # Select stoichiometric reactions with additionCost lower or equal than limit
-    ref <- reference[additionCost(reference,reactions)<=limit]
-    # Extract all orphan reactants from reactionList
-    orphan_r <- orphanReactants(reactions)
-    # Count the number of orphan reactants that are in orphanOriginal
-    orphan_r <- orphan_r[orphan_r%in%orphan]
-    message(paste0(length(orphan_r)," Orphan reactants found"))
-    # Identify the reactions that contain orphan reactants in selected stoichiometric reactions
-    to.add <- unique(unlist(lapply(orphan_r,function(orphan){ref[grep(orphan,reactants(ref),fixed = TRUE)]})))
-    # If the number of orphanOriginals \in OrphanReactant is lower than OrphanOriginals \in orphanReactant \in orphans(reactionList \cup to.add)
-    if(sum(orphan%in%orphan_r) <= sum(orphan%in%orphanReactants(unique(c(reactions,to.add))))){
-      break;
+  reference_reactants <- reactants(reference)
+  reference_products <- products(reference)
+  oR <- orphanReactants(reactionList)
+  oP <- orphanProducts(reactionList)
+  newR <- NULL
+  repeat({
+    aC <- additionCost(reactionList = reference, reference = reactionList)
+    rA <- reference[aC <= limit]
+    toAdd <- rA[unlist(lapply(reference_reactants[aC <= limit],function(sR){any(sR %in% oR)}))]
+    if(!all(toAdd %in% newR)){
+      newR <- unique(c(newR,toAdd))
+      reactionList <- unique(c(reactionList,newR))
     } else {
-      reactions <- unique(c(reactions,to.add))
+      break()
     }
-  }
-  repeat{
-    ref <- reference[additionCost(reference,reactions)<=limit]
-    orphan_p <- orphanProducts(reactions)
-    orphan_p <- orphan_p[orphan_p%in%orphan]
-    message(paste0(length(orphan_p)," Orphan products found"))
-    to.add <- unlist(lapply(orphan_p,function(orphan){ref[grep(orphan,products(ref),fixed = TRUE)]}))
-    if(sum(orphan%in%orphan_p) <= sum(orphan%in%orphanProducts(unique(c(reactions,to.add))))){
-      break;
-    } else{
-      reactions <- unique(c(reactions,to.add))
+  })
+  repeat({
+    aC <- additionCost(reactionList = reference, reference = reactionList)
+    rA <- reference[aC <= limit]
+    toAdd <- rA[unlist(lapply(reference_products[aC <= limit],function(sP){any(sP %in% oP)}))]
+    if(!all(toAdd %in% newR)){
+      newR <- unique(c(newR,toAdd))
+      reactionList <- unique(c(reactionList,newR))
+    } else {
+      break()
     }
-  }
-  reactions <- unique(reactions)
-  if(consensus == TRUE){
-    return(reactions)
-  } else{
-    return(reactions[!reactions%in%reactionList])
+  })
+  if(isTRUE(consensus)){
+    return(reactionList)
+  } else {
+    return(newR)
   }
 }
-
+# hsa <- getReference(organism = "hsa")
+# reactionList <- sample(hsa$reaction,100)
+# reference <- hsa$reaction[!hsa$reaction %in% reactionList]
+# gF <- sapply(seq(0,1,0.025),function(sLimit){
+#   x <- gapFill(reactionList = reactionList, reference = reference, limit = sLimit)
+#   c(mean(!orphanMetabolites(reactionList) %in% orphanMetabolites(c(reactionList,x))),length(x))
+# })
+# gF <- t(gF)
+# png("additionCost-Threshold.png", width = 3000, height = 1500, res = 300)
+# par(mfrow=c(1,2))
+# plot(x = seq(0,1,0.025), y = gF[,1], type = "l", xlim = c(0,1), ylim = c(0,1), xlab="Addition Cost", ylab = "Proportion of gaps filled")
+# abline(v=0.25,col="red")
+# plot(seq(0,1,0.025),gF[,2],type = "l", xlab ="Addition Cost", ylab="Number of reactions added")
+# abline(v=0.25,col="red")
+# dev.off()
