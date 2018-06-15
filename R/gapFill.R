@@ -37,7 +37,7 @@
 #'         limit = 0.25,
 #'         woCompartment = TRUE,
 #'         consensus = FALSE)}
-gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE,consensus=FALSE){
+gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE, consensus=FALSE){
   reference_reactants <- reactants(reference)
   reference_products <- products(reference)
   oR <- orphanReactants(reactionList)
