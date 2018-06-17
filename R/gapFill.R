@@ -37,34 +37,39 @@
 #'         limit = 0.25,
 #'         woCompartment = TRUE,
 #'         consensus = FALSE)}
-gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE, consensus=FALSE){
+gapFill <- function(reactionList, reference, limit = 0.25, nRun = 5, woCompartment=FALSE, consensus=FALSE){
   reference_reactants <- reactants(reference)
   reference_products <- products(reference)
-  oR <- orphanReactants(reactionList)
-  oP <- orphanProducts(reactionList)
   newR <- NULL
-  repeat({
-    aC <- additionCost(reactionList = reference, reference = reactionList)
-    rA <- reference[aC <= limit]
-    toAdd <- rA[unlist(lapply(reference_reactants[aC <= limit],function(sR){any(sR %in% oR)}))]
-    if(!all(toAdd %in% newR)){
-      newR <- unique(c(newR,toAdd))
-      reactionList <- unique(c(reactionList,newR))
-    } else {
-      break()
-    }
-  })
-  repeat({
-    aC <- additionCost(reactionList = reference, reference = reactionList)
-    rA <- reference[aC <= limit]
-    toAdd <- rA[unlist(lapply(reference_products[aC <= limit],function(sP){any(sP %in% oP)}))]
-    if(!all(toAdd %in% newR)){
-      newR <- unique(c(newR,toAdd))
-      reactionList <- unique(c(reactionList,newR))
-    } else {
-      break()
-    }
-  })
+  n <- 0
+  while (n < nRun) {
+    oR <- orphanReactants(reactionList)
+    oP <- orphanProducts(reactionList)
+    repeat({
+      aC <- additionCost(reactionList = reference, reference = reactionList)
+      rA <- reference[aC <= limit]
+      toAdd <- rA[unlist(lapply(reference_reactants[aC <= limit],function(sR){any(sR %in% oR)}))]
+      if(!all(toAdd %in% newR)){
+        newR <- unique(c(newR,toAdd))
+        reactionList <- unique(c(reactionList,newR))
+      } else {
+        break()
+      }
+    })
+    repeat({
+      aC <- additionCost(reactionList = reference, reference = reactionList)
+      rA <- reference[aC <= limit]
+      toAdd <- rA[unlist(lapply(reference_products[aC <= limit],function(sP){any(sP %in% oP)}))]
+      if(!all(toAdd %in% newR)){
+        newR <- unique(c(newR,toAdd))
+        reactionList <- unique(c(reactionList,newR))
+      } else {
+        break()
+      }
+    })
+    n <- n + 1
+    message(round(mean(!unique(c(oR,oP)) %in% orphanMetabolites(reactionList)),2))
+  }
   if(isTRUE(consensus)){
     return(reactionList)
   } else {
@@ -74,6 +79,7 @@ gapFill <- function(reactionList, reference, limit = 0.25, woCompartment=FALSE, 
 # hsa <- getReference(organism = "hsa")
 # reactionList <- sample(hsa$reaction,100)
 # reference <- hsa$reaction[!hsa$reaction %in% reactionList]
+# nR2 <- gapFill(reactionList = reactionList, reference = reference, nRun = 5)
 # gF <- sapply(seq(0,1,0.025),function(sLimit){
 #   x <- gapFill(reactionList = reactionList, reference = reference, limit = sLimit)
 #   c(mean(!orphanMetabolites(reactionList) %in% orphanMetabolites(c(reactionList,x))),length(x))
