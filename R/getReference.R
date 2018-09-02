@@ -78,7 +78,7 @@ getReference<-function(organism = "all",sep = ";"){
     reaction_all <- unique(reaction_all)
     # Downloading directions
     message("Setting directionality ... ", appendLF = FALSE)
-    direction <- lapply(names(keggList("pathway","sot")),function(x){suppressMessages(keggGet(x,"kgml"))})
+    direction <- lapply(names(keggList("pathway",organism)),function(x){suppressMessages(keggGet(x,"kgml"))})
     direction <- lapply(direction, function(b){
       b <- unlist(strsplit(b,"\n"))
       b <- b[grepl('\\<reaction[[:space:]]+',b)]
