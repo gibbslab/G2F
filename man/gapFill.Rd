@@ -4,22 +4,30 @@
 \alias{gapFill}
 \title{Find and fill gaps in a metabolic network}
 \usage{
-gapFill(reactionList, reference, limit = 0.25, woCompartment = FALSE,
-  consensus = FALSE)
+gapFill(
+  reactionList,
+  reference,
+  limit = 0.25,
+  nRun = 5,
+  woCompartment = FALSE,
+  consensus = FALSE
+)
 }
 \arguments{
-\item{reactionList}{A set of stoichiometric reaction with the following format: 
+\item{reactionList}{A set of stoichiometric reaction with the following format:
 
-\code{"H2O[c] + Urea-1-carboxylate[c] <=> 2 CO2[c] + 2 NH3[c]"} 
+\code{"H2O[c] + Urea-1-carboxylate[c] <=> 2 CO2[c] + 2 NH3[c]"}
 
 Where arrows and plus signs are surrounded by a "space character".
 It is also expected that stoichiometry coefficients are surrounded by spaces, (nothe the "2" before the CO2[c] or the NH3[c]).
-It also expects arrows to be in the form "\code{=>}" or "\code{<=>}". 
+It also expects arrows to be in the form "\code{=>}" or "\code{<=>}".
 Meaning that arrows like "\code{==>}", "\code{<==>}", "\code{-->}" or "\code{->}" will not be parsed and will lead to errors.}
 
 \item{reference}{A set of stoichiometric reaction with the same format of reactionList}
 
 \item{limit}{An addition cost value to be used as a limit to select reactions to be added. Is calculated as NumberNewMetabolites/NumerOfMetabolites for each reaction.}
+
+\item{nRun}{The number of iterations to search for new gaps and fill them according to the score, the default is five.}
 
 \item{woCompartment}{A boolean value \code{TRUE} to define if compartment labels should be removed of the reactionList stoichiometric reactions, \code{FALSE} is used as default.}
 
@@ -31,21 +39,26 @@ This function identifies the gaps and fills it from the stoichiometric reactions
 \examples{
 \dontrun{
 # Downloading stoichiometric reactions
-all <- getReference(organism = "all",sep = ";")
-eco <- getReference(organism = "eco",sep = ";")
+all <- getReference(organism = "all", sep = ";")
+eco <- getReference(organism = "eco", sep = ";")
 
 # Filtering reactions
-all <- mapReactions(reactionList = all$reaction\%in\%eco$reaction,
-                    referenceData = all,
-                    by = "bool",
-                    inverse = TRUE)
-                    
+all <- mapReactions(
+  reactionList = all$reaction \%in\% eco$reaction,
+  referenceData = all,
+  by = "bool",
+  inverse = TRUE
+)
+
 # gapFill
-gapFill(reactionList = eco$reaction,
-        reference = all$reaction, 
-        limit = 0.25,
-        woCompartment = TRUE,
-        consensus = FALSE)}
+gapFill(
+  reactionList = eco$reaction,
+  reference = all$reaction,
+  limit = 0.25,
+  woCompartment = TRUE,
+  consensus = FALSE
+)
+}
 }
 \seealso{
 \code{additionCost} function documentation.
