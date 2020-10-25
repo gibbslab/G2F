@@ -4,7 +4,7 @@ extract <- function(reaction) {
   if (grepl(";", reaction)) {
     parts <- unlist(strsplit(reaction, ";[[:blank:]]+"))
     return(parts[length(parts)])
-  } else{
+  } else {
     if (!grepl("rn:R[[:digit:]]+[[:blank:]]", reaction)) {
       return(reaction)
     } else {

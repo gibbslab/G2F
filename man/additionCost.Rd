@@ -40,9 +40,9 @@ example_reactionList <- vector()
 example_reactionList[1] <- "A + E => F + G"
 example_reactionList[2] <- "A + E <=> F"
 
-# The addition cost function will identify those metabolites not included in 
+# The addition cost function will identify those metabolites not included in
 # the reference (F and G) and will compute the addition cost for each reaction
-# as the ratio of the number of metabolites not included in the reference 
+# as the ratio of the number of metabolites not included in the reference
 # over the total of metabolites in the reaction (2/4 and 1/3 respectively).
 
 additionCost(reactionList = example_reactionList, reference = example_reference)

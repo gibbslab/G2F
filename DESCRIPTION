@@ -4,6 +4,8 @@ Title: Find and Fill Gaps in Metabolic Networks
 Version: 0.3
 Authors@R: c(person("Kelly","Botero",role=c("aut")),
              person("Daniel","Osorio",email="dcosorioh@unal.edu.co",role=c("aut","cre")),
+             person("Nicolas","Mendoza",role=c("aut")),
+             person("Felipe","Rojas-Rodriguez",role=c("aut")),
              person("Janneth","Gonzalez",role=c("aut","ths")),
              person("Andres","Pinzon", role=c("aut","ths"))
              )
@@ -11,4 +13,5 @@ Description: For a given metabolic network, this package finds the gaps (metabol
 Imports: KEGGREST, minval (>= 0.5), sybil
 License: GPL-2
 LazyData: TRUE
-RoxygenNote: 6.0.1
+RoxygenNote: 7.1.1
+BugReports: https://github.com/gibbslab/g2f/issues
