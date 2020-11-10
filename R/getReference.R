@@ -96,7 +96,7 @@ getReference <- function(organism = "all", sep = ";") {
       }
     })
     direction <- pathways_rx[!sapply(pathways_rx, is.null)]
-    n_pathways_wo_rx <- length(direction)
+    n_pathways_rx <- length(direction)
     direction <- do.call(rbind.data.frame, direction)
     direction <- apply(direction, 1, function(x) {
       expand.grid(unlist(strsplit(x[[1]], "[[:space:]]+")), x[[2]])
@@ -110,9 +110,9 @@ getReference <- function(organism = "all", sep = ";") {
     reaction_all <- as.data.frame.array(reaction_all)
     reaction_all$reaction[reaction_all$id %in% direction] <- gsub("<=>", "=>", reaction_all$reaction[reaction_all$id %in% direction])
     message("DONE")
-    message("The ", 
-            round(n_pathways_wo_rx/length(pathways_reactions) * 100, 3),
-            "% of pathways don't have reactions"
+    message("The ",
+            round(n_pathways_rx/length(pathways_rx) * 100, 2),
+            "% of pathways have reactions"
             )
   }
   summary.ec <- function(id) {
