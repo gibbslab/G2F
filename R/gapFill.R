@@ -69,22 +69,6 @@ gapFill <- function(reactionList, reference, limit = 0.25, nRun = 5, woCompartme
   }
 }
 
-fillOrphanMetabolites <- function(reference, reactionList, limit, reference_metabolites, oM, newR) {
-  repeat({
-    aC <- additionCost(reactionList = reference, reference = reactionList)
-    rA <- reference[aC <= limit]
-    toAdd <- rA[unlist(lapply(reference_metabolites[aC <= limit], function(sR) {
-      any(sR %in% oM)
-    }))]
-    if (any(!toAdd %in% newR)) {
-      newR <- unique(c(newR, toAdd))
-      reactionList <- unique(c(reactionList, newR))
-    } else {
-      break()
-    }
-  })
-  return(list("new" = newR, "summary" = reactionList))
-}
 # hsa <- getReference(organism = "hsa")
 # reactionList <- sample(hsa$reaction,100)
 # reference <- hsa$reaction[!hsa$reaction %in% reactionList]
