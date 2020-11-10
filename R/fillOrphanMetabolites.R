@@ -2,12 +2,15 @@ fillOrphanMetabolites <- function(reference, reactionList, limit, reference_meta
   repeat({
     aC <- additionCost(reactionList = reference, reference = reactionList)
     rA <- reference[aC <= limit]
-    toAdd <- rA[unlist(lapply(reference_metabolites[aC <= limit], function(sR) {
+    whichAdd <- unlist(lapply(reference_metabolites[aC <= limit], function(sR) {
       any(sR %in% oM)
-    }))]
-    if (any(!toAdd %in% newR)) {
-      newR <- unique(c(newR, toAdd))
-      reactionList <- unique(c(reactionList, newR))
+    }))
+    toAdd <- rA[whichAdd]
+    aC <- aC[aC <= limit][whichAdd]
+    if (any(!toAdd %in% newR$react)) {
+      newR <- rbind(newR, data.frame("addCost" = aC, "react" = toAdd))
+      newR <- newR[!duplicated(newR$react), ]
+      reactionList <- unique(c(reactionList, newR$react))
     } else {
       break()
     }

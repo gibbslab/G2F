@@ -46,7 +46,7 @@
 gapFill <- function(reactionList, reference, limit = 0.25, nRun = 5, woCompartment = FALSE, consensus = FALSE) {
   reference_reactants <- reactants(reference)
   reference_products <- products(reference)
-  newR <- NULL
+  newR <- data.frame("addCost" = numeric(),"react" = character())
   n <- 0
   while (n < nRun) {
     oR <- orphanReactants(reactionList)
@@ -65,6 +65,7 @@ gapFill <- function(reactionList, reference, limit = 0.25, nRun = 5, woCompartme
   if (isTRUE(consensus)) {
     return(reactionList)
   } else {
+    row.names(newR) <- NULL
     return(newR)
   }
 }
