@@ -87,6 +87,7 @@ getReference <- function(organism = "all", sep = ";") {
       lines <- unlist(strsplit(b, "\n"))
       rx_obj <- lines[grepl("\\<reaction[[:space:]]+", lines)]
       if (length(rx_obj) > 0) {
+        message(b)
         rx_df <- do.call(rbind.data.frame, strsplit(rx_obj, '\"'))[, c(4, 6)]
         colnames(rx_df) <- c("rxn", "rev")
         return(rx_df)

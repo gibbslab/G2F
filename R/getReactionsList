@@ -1,4 +1,4 @@
-#' @export extractModelReact
+#' @export getReactionsList
 #' @importFrom "sybil" "checkReactId"
 #' @author Nicolas Mendoza Mejia <nimendozam@unal.edu.co>
 #  Bioinformatics and Systems Biology Lab      | Universidad Nacional de Colombia
@@ -23,9 +23,9 @@
 #' data("Ec_core")
 #'
 #' # Extract reactions
-#' react <- extractModelReact(Ec_core)
+#' react <- getReactionsList(Ec_core)
 #' }
-extractModelReact <- function(object) {
+getReactionsList <- function(object) {
   check <- checkReactId(object, react = object@react_id)
   cind <- react_pos(check)
 
