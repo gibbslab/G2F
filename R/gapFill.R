@@ -44,6 +44,8 @@
 #' )
 #' }
 gapFill <- function(reactionList, reference, limit = 0.25, nRun = 5, woCompartment = FALSE, consensus = FALSE) {
+  reactionList <- gsub("->", "_>", reactionList)
+  reference <- gsub("->", "_>", reference)
   reference_reactants <- reactants(reference)
   reference_products <- products(reference)
   newR <- data.frame("addCost" = numeric(),"react" = character())

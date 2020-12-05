@@ -2,9 +2,9 @@
 
 export(additionCost)
 export(blockedReactions)
-export(extractModelReact)
 export(gapFill)
 export(gapFind)
+export(getReactionsList)
 export(getReference)
 importFrom("KEGGREST","keggGet")
 importFrom("KEGGREST","keggLink")
