@@ -83,13 +83,20 @@ getReference <- function(organism = "all", sep = ";") {
     direction <- lapply(names(keggList("pathway", organism)), function(x) {
       suppressMessages(keggGet(x, "kgml"))
     })
-    direction <- lapply(direction, function(b) {
-      b <- unlist(strsplit(b, "\n"))
-      b <- b[grepl("\\<reaction[[:space:]]+", b)]
-      b <- do.call(rbind.data.frame, strsplit(b, '\"'))[, c(4, 6)]
-      colnames(b) <- c("rxn", "rev")
-      return(b)
+    pathways_rx <- lapply(direction, function(b) {
+      lines <- unlist(strsplit(b, "\n"))
+      rx_obj <- lines[grepl("\\<reaction[[:space:]]+", lines)]
+      if (length(rx_obj) > 0) {
+        rx_df <- do.call(rbind.data.frame, strsplit(rx_obj, '\"'))[, c(4, 6)]
+        colnames(rx_df) <- c("rxn", "rev")
+        return(rx_df)
+      }
+      else {
+        return()
+      }
     })
+    direction <- pathways_rx[!sapply(pathways_rx, is.null)]
+    n_pathways_rx <- length(direction)
     direction <- do.call(rbind.data.frame, direction)
     direction <- apply(direction, 1, function(x) {
       expand.grid(unlist(strsplit(x[[1]], "[[:space:]]+")), x[[2]])
@@ -103,6 +110,10 @@ getReference <- function(organism = "all", sep = ";") {
     reaction_all <- as.data.frame.array(reaction_all)
     reaction_all$reaction[reaction_all$id %in% direction] <- gsub("<=>", "=>", reaction_all$reaction[reaction_all$id %in% direction])
     message("DONE")
+    message("The ",
+            round(n_pathways_rx/length(pathways_rx) * 100, 2),
+            "% of pathways have reactions"
+            )
   }
   summary.ec <- function(id) {
     data <- reaction_all[reaction_all[, "id"] %in% id, ]

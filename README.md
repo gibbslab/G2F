@@ -29,3 +29,5 @@ Available functions:
 Citation
 --------
 Kelly Botero, Daniel Osorio, Janneth Gonzalez and Andres Pinzon-Velasco (2016). **g2f: Find and Fill Gaps in Metabolic Networks**. R package version 0.1.
+
+Daniel Osorio, Andres Pinzon-Velasco, Nicolas Mendoza-Mejia, Felipe Rojas-Rodriguez and Janneth Gonzalez  (2020). **g2f as a Novel Tool to Find and Fill Gaps in Metabolic Networks**. R package version 0.1.
